@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Request Capture (Debug Tool)",
+  "version": "1.0.2",
+  "description": "Capture all requests/responses with cookies and tokens; export to JSON.",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "cookies",
+    "downloads",
+    "storage"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "Request Capture",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  },
+  "browser_specific_settings": {
+    "gecko": { "strict_min_version": "121.0" }
+  }
+}

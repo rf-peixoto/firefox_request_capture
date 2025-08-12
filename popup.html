@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Request Capture</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #141a21;
+      --panel-2: #0f141a;
+      --text: #e6edf3;
+      --muted: #9aa7b2;
+      --accent: #5cc8ff;
+      --ok: #35c759;
+      --warn: #ff453a;
+      --border: #1f2a33;
+      --chip: #1b242d;
+      --shadow: 0 8px 24px rgba(0,0,0,.35);
+      --radius: 12px;
+    }
+
+    @media (prefers-color-scheme: light) {
+      /* Always stay dark, but keep contrast if user is in light mode */
+      :root { --text:#0b0f14; --bg:#e6edf3; --panel:#ffffff; --panel-2:#f4f7fb; --muted:#5b6b77; --border:#d8e0e7; --chip:#eef3f7; }
+      body { background: var(--bg); color: var(--text); }
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrap {
+      min-width: 320px;
+      max-width: 360px;
+      padding: 14px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .logo {
+      width: 28px; height: 28px;
+      display: inline-grid; place-items: center;
+      border-radius: 8px;
+      background: radial-gradient(65% 65% at 30% 30%, #6ee7ff 0%, #1c90ff 50%, #0044cc 100%);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.12);
+    }
+    .title {
+      font-weight: 600; letter-spacing: .2px;
+    }
+
+    .status {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--muted);
+      margin: 6px 0 10px;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--muted);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.02) inset;
+    }
+    .dot.on { background: var(--ok); }
+    .dot.off { background: var(--muted); }
+    .dot.busy { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%{opacity:.6} 50%{opacity:1} 100%{opacity:.6} }
+
+    .metrics {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .chip {
+      background: var(--chip);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      display: grid; gap: 2px;
+    }
+    .chip .label { color: var(--muted); font-size: 11px; }
+    .chip .value { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+    .actions {
+      display: grid; gap: 8px;
+    }
+    .btn {
+      appearance: none; border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px; cursor: pointer;
+      background: #0f1720; color: var(--text);
+      font-weight: 600; letter-spacing: .2px;
+      transition: transform .04s ease, border-color .2s ease, background .2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn:hover { border-color: #2a3a47; }
+    .btn:active { transform: translateY(1px); }
+    .btn.start { background: rgba(53,199,89,.12); border-color: rgba(53,199,89,.35); }
+    .btn.stop  { background: rgba(255,69,58,.12); border-color: rgba(255,69,58,.35); }
+
+    .subtle {
+      font-size: 11px; color: var(--muted);
+      text-align: center; margin-top: 4px;
+    }
+
+    .warn {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #ffb4ac;
+      background: rgba(255, 69, 58, .08);
+      border: 1px solid rgba(255,69,58,.25);
+      border-radius: 8px;
+      padding: 8px 10px;
+      line-height: 1.35;
+    }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .right { margin-left: auto; }
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #0c1218; border: 1px solid var(--border);
+      padding: 0 6px; border-radius: 6px; font-size: 11px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="logo" aria-hidden="true">
+          <!-- minimalist glyph -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 17V7m14 0v10M9 14V10m6 4V10" stroke="white" stroke-opacity=".92" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="title">Request Capture</div>
+        <div class="right kbd" title="Live while popup is open">live</div>
+      </header>
+
+      <div class="status">
+        <div id="stateDot" class="dot off" aria-hidden="true"></div>
+        <div id="stateText">Idle</div>
+      </div>
+
+      <div class="metrics" role="status" aria-live="polite">
+        <div class="chip">
+          <div class="label">Pending</div>
+          <div id="pendingVal" class="value mono">0</div>
+        </div>
+        <div class="chip">
+          <div class="label">Captured</div>
+          <div id="capturedVal" class="value mono">0</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="primaryBtn" class="btn start" type="button" aria-pressed="false">
+          <svg id="iconStart" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 5v14l11-7L8 5z" stroke="currentColor" stroke-width="2" fill="currentColor" />
+          </svg>
+          <svg id="iconStop" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
+            <rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+          </svg>
+          <span id="btnLabel">Start Capture</span>
+        </button>
+        <div class="subtle">
+          Start, browse a few pages, then press <span class="mono">Stop &amp; Export</span> to get a JSON report.
+        </div>
+      </div>
+
+      <div class="warn">
+        Export may include cookies, tokens, Authorization headers, and PII. Handle securely and avoid untrusted uploads.
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
