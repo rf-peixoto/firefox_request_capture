@@ -21,7 +21,7 @@
   },
   "applications": {
     "gecko": {
-      "id": "the-street.xyz",
+      "id": "noreply@the-street.xyz",
       "strict_min_version": "91.0"
     }
   }
