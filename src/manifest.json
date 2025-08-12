@@ -1,25 +1,28 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Request Capture (Debug Tool)",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Capture all requests/responses with cookies and tokens; export to JSON.",
   "permissions": [
+    "<all_urls>",
     "webRequest",
     "webRequestBlocking",
     "cookies",
     "downloads",
     "storage"
   ],
-  "host_permissions": ["<all_urls>"],
-  "action": {
+  "browser_action": {
     "default_title": "Request Capture",
     "default_popup": "popup.html"
   },
   "background": {
     "scripts": ["background.js"],
-    "service_worker": "background.js"
+    "persistent": true
   },
-  "browser_specific_settings": {
-    "gecko": { "strict_min_version": "121.0" }
+  "applications": {
+    "gecko": {
+      "id": "the-street.xyz",
+      "strict_min_version": "91.0"
+    }
   }
 }
