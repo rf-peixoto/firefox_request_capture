@@ -77,6 +77,7 @@ function extractTokensFromHeaders(hObj) {
 	  "x-amz-security-token",
 	  "x-amz-content-sha256",
 	  "x-amz-target",
+	  "AKIA"
 
 	  // Azure / Microsoft
 	  "ocp-apim-subscription-key",
@@ -133,8 +134,7 @@ function extractTokensFromHeaders(hObj) {
 	  "x-signature-timestamp",
 	  "x-request-signature",
 	  "x-api-signature",
-	  "x-authorization-signature",
-	  "AKIA"
+	  "x-authorization-signature"
   ];
 
   for (const k of candidates) {
@@ -350,4 +350,5 @@ browser.runtime.onMessage.addListener(async (msg) => {
     return { capturing, pending: reqs.size, captured: captured.length };
   }
 });
+
 
