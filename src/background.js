@@ -133,7 +133,8 @@ function extractTokensFromHeaders(hObj) {
 	  "x-signature-timestamp",
 	  "x-request-signature",
 	  "x-api-signature",
-	  "x-authorization-signature"
+	  "x-authorization-signature",
+	  "AKIA"
   ];
 
   for (const k of candidates) {
@@ -349,3 +350,4 @@ browser.runtime.onMessage.addListener(async (msg) => {
     return { capturing, pending: reqs.size, captured: captured.length };
   }
 });
+
